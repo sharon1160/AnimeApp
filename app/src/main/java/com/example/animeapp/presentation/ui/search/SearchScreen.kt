@@ -170,7 +170,7 @@ fun FilterChip(title: String, selected: String, onSelected: (String) -> Unit) {
             AnimatedVisibility(visible = isSelected) {
                 Icon(
                     imageVector = Icons.Filled.Check,
-                    contentDescription = stringResource(R.string.check_icon_content_decription),
+                    contentDescription = stringResource(R.string.check_icon_content_description),
                     tint = Color.White
                 )
             }
