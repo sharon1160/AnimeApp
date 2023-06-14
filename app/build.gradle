@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.apollographql.apollo3' version '3.8.2'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -45,7 +47,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.2'
+        kotlinCompilerExtensionVersion '1.4.3'
     }
     packagingOptions {
         resources {
@@ -85,4 +87,17 @@ dependencies {
     // Paging
     implementation "androidx.paging:paging-runtime:3.1.1"
     implementation "androidx.paging:paging-compose:1.0.0-alpha20"
+    // Hilt
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-android-compiler:2.44"
+    kapt "androidx.hilt:hilt-compiler:1.0.0"
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+    // Apollo Graphql
+    implementation "com.apollographql.apollo3:apollo-runtime:3.8.2"
+}
+
+apollo {
+    service("service") {
+        packageName.set("com.example")
+    }
 }
