@@ -1,4 +1,4 @@
-package com.example.animeapp.domain.usecases
+package com.example.animeapp.domain.usecase
 
 import com.example.animeapp.domain.AnimeClient
 import com.example.animeapp.domain.Anime
