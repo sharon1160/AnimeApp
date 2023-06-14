@@ -1,10 +1,13 @@
 package com.example.animeapp.di
 
+import android.app.Application
+import android.content.Context
 import com.apollographql.apollo3.ApolloClient
 import com.example.animeapp.data.ApolloAnimeClient
 import com.example.animeapp.domain.AnimeClient
-import com.example.animeapp.domain.usecases.GetAnimeUseCase
-import com.example.animeapp.domain.usecases.GetAnimesUseCase
+import com.example.animeapp.domain.repository.FavoritesRepository
+import com.example.animeapp.domain.usecase.GetAnimeUseCase
+import com.example.animeapp.domain.usecase.GetAnimesUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,5 +41,17 @@ object AppModule {
     @Singleton
     fun provideGetAnimeUseCase(animeClient: AnimeClient): GetAnimeUseCase {
         return GetAnimeUseCase(animeClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideApplicationContext(application: Application): Context {
+        return application.applicationContext
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavoriteRepository(context: Context): FavoritesRepository {
+        return FavoritesRepository(context)
     }
 }
