@@ -5,6 +5,8 @@ import android.content.Context
 import com.apollographql.apollo3.ApolloClient
 import com.example.animeapp.data.ApolloAnimeClient
 import com.example.animeapp.domain.AnimeClient
+import com.example.animeapp.domain.repository.AnimesRepository
+import com.example.animeapp.domain.repository.AnimesRepositoryImpl
 import com.example.animeapp.domain.repository.FavoritesRepository
 import com.example.animeapp.domain.usecase.GetAnimeUseCase
 import com.example.animeapp.domain.usecase.GetAnimesUseCase
@@ -53,5 +55,11 @@ object AppModule {
     @Singleton
     fun provideFavoriteRepository(context: Context): FavoritesRepository {
         return FavoritesRepository(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAnimesRepository(animesRepositoryImpl: AnimesRepositoryImpl): AnimesRepository {
+        return animesRepositoryImpl
     }
 }
