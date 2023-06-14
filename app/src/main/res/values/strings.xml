@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">AnimeApp</string>
     <string name="bottom_navigation_description">Bottom navigation content description</string>
+    <string name="welcome_message">Welcome! Do a search</string>
+    <string name="search_placeholder">Search</string>
+    <string name="search_content_description">Search content description</string>
+    <string name="close_icon_content_description">Close icon content description</string>
+    <string name="check_icon_content_description">Check icon content description</string>
+    <string name="favorite_icon_content_description">Favorite icon content description</string>
+    <string name="default_filter">Filter 1</string>
+    <string name="back_icon_content_description">Back icon</string>
+    <string name="favorite_icon_navigation_content_description">Favorite Icon</string>
+    <string name="search_screen_title">Search</string>
+    <string name="favorites_screen_title">Favorites</string>
+    <string name="detail_screen_title">Detail</string>
+    <string name="character_screen_title">Character</string>
 </resources>
