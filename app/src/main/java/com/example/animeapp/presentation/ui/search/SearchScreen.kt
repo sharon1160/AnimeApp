@@ -15,8 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +32,7 @@ import com.example.animeapp.presentation.ui.theme.AnimeAppTheme
 import com.example.animeapp.presentation.ui.theme.Roboto
 import com.example.animeapp.R
 import com.example.animeapp.domain.Anime
+import com.example.animeapp.domain.enums.ContentType
 import com.example.animeapp.presentation.ui.home.AnimeTopAppBar
 
 @Composable
@@ -50,8 +49,9 @@ fun SearchScreen(
         SearchScreenContent(
             uiState.query,
             searchViewModel::updateQuery,
-            uiState.sortFilter,
-            searchViewModel::updateSortFilter,
+            uiState.typeFilter,
+            searchViewModel::getTypeFilters,
+            searchViewModel::updateTypeFilter,
             uiState.animes,
             searchViewModel::searchAnime,
             {},
@@ -66,10 +66,11 @@ fun SearchScreen(
 fun SearchScreenContent(
     query: String,
     updateQuery: (String) -> Unit,
-    sortFilter: String,
-    updateSortFilter: (String) -> Unit,
+    typeFilter: ContentType,
+    getTypeFilters: () -> List<ContentType>,
+    updateTypeFilter: (String) -> Unit,
     animesList: List<Anime>?,
-    searchAnime: (String) -> Unit,
+    searchAnime: (String, ContentType) -> Unit,
     insertFavorite: (Anime) -> Unit,
     deleteFavorite: (Anime) -> Unit,
     navigateToDetail: () -> Unit,
@@ -88,8 +89,8 @@ fun SearchScreenContent(
                 .padding(it)
                 .fillMaxSize()
         ) {
-            SearchAnimeBar(searchAnime, query, sortFilter, updateQuery)
-            Filters(query, searchAnime, sortFilter, updateSortFilter)
+            SearchAnimeBar(searchAnime, query, typeFilter, updateQuery)
+            Filters(query, searchAnime, typeFilter, getTypeFilters, updateTypeFilter)
             animesList?.let {
                 if (animesList.isNotEmpty()) {
                     AnimesList(
@@ -112,33 +113,33 @@ fun SearchScreenContent(
 @Composable
 fun Filters(
     query: String,
-    searchAnime: (String) -> Unit,
-    sortFilter: String,
-    updateSortFilter: (String) -> Unit,
+    searchAnime: (String, ContentType) -> Unit,
+    typeFilter: ContentType,
+    getTypeFilters: () -> List<ContentType>,
+    updateTypeFilter: (String) -> Unit,
 ) {
-    val filtersList = listOf(
-        "Filter 1",
-        "Filter 2",
-        "Filter 3"
-    )
+    val typeFiltersList = getTypeFilters()
 
-    var selected = sortFilter
-
+    var selected = when(typeFilter) {
+        ContentType.ANIME -> "Anime"
+        ContentType.MANGA -> "Manga"
+    }
     Row(
         modifier = Modifier
             .padding(top = 75.dp, start = 16.dp, end = 16.dp)
             .fillMaxWidth()
     ) {
-        filtersList.forEach {
+        typeFiltersList.forEach {
             FilterChip(
-                title = it,
+                title = it.name.lowercase()
+                    .replaceFirstChar { first -> first.uppercase() },
                 selected = selected,
                 onSelected = { filter ->
                     selected = filter
                     if (query.isNotEmpty()) {
-                        searchAnime(query)
+                        searchAnime(query, it)
                     }
-                    updateSortFilter(selected)
+                    updateTypeFilter(selected)
                 }
             )
         }
@@ -193,16 +194,14 @@ fun AnimesList(
     deleteFavorite: (Anime) -> Unit,
     navigateToDetail: () -> Unit
 ) {
-    Box(modifier = Modifier.padding(top = 120.dp, bottom = 50.dp)) {
-
-
+    Box(modifier = Modifier.padding(top = 120.dp)) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
             contentPadding = PaddingValues(
-                start = 12.dp,
-                top = 16.dp,
-                end = 12.dp,
-                bottom = 16.dp
+                start = 8.dp,
+                top = 12.dp,
+                end = 8.dp,
+                bottom = 12.dp
             ),
             content = {
                 items(animesList) { anime ->
@@ -233,7 +232,7 @@ fun AnimeCard(
             .clickable {
                 navigateToDetail()
             },
-        shape = MaterialTheme.shapes.large
+        shape = MaterialTheme.shapes.small
     ) {
         Column(
             modifier = Modifier
@@ -249,10 +248,10 @@ fun AnimeCard(
                     .scale(Scale.FILL)
                     .build(),
                 modifier = Modifier
-                    .padding(bottom = 10.dp)
+                    .padding(bottom = 8.dp)
                     .height(120.dp)
                     .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.medium),
+                    .clip(MaterialTheme.shapes.small),
                 contentScale = ContentScale.Crop,
                 contentDescription = null
             )
@@ -275,75 +274,6 @@ fun AnimeCard(
                         deleteFavorite
                     )
                 }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun ListItem(
-    anime: Anime,
-    insertFavorite: (Anime) -> Unit,
-    deleteFavorite: (Anime) -> Unit,
-    navigateToDetail: () -> Unit
-) {
-    Surface(
-        color = MaterialTheme.colorScheme.onPrimary,
-        modifier = Modifier.padding(vertical = 0.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            val lineColor = MaterialTheme.colorScheme.inversePrimary
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .drawBehind {
-                        drawLine(
-                            color = lineColor,
-                            start = Offset(0f, size.height),
-                            end = Offset(size.width, size.height),
-                            strokeWidth = 2.dp.toPx()
-                        )
-                    }
-                    .clickable {
-                        navigateToDetail()
-                    }
-            ) {
-
-                AsyncImage(
-                    model = anime.coverLargeImage,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(start = 16.dp, top = 6.dp, bottom = 6.dp)
-                        .height(80.dp)
-                        .width(80.dp)
-                        .clip(MaterialTheme.shapes.medium),
-                    contentScale = ContentScale.Crop
-                )
-
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp, end = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text(
-                        text = anime.japaneseTitle,
-                        fontFamily = Roboto,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Light
-                    )
-                }
-                FavoritesButton(
-                    anime,
-                    insertFavorite,
-                    deleteFavorite
-                )
             }
         }
     }
@@ -404,9 +334,9 @@ fun Message(text: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchAnimeBar(
-    searchAnime: (String) -> Unit,
+    searchAnime: (String, ContentType) -> Unit,
     query: String,
-    sortFilter: String,
+    typeFilter: ContentType,
     updateQuery: (String) -> Unit
 ) {
     var active by remember { mutableStateOf(false) }
@@ -420,7 +350,7 @@ fun SearchAnimeBar(
             },
             onSearch = {
                 if (it.isNotEmpty()) {
-                    searchAnime(it)
+                    searchAnime(it, typeFilter)
                     active = false
                 }
             },
@@ -513,10 +443,11 @@ fun SearchScreenPreview() {
         SearchScreenContent(
             query = "",
             updateQuery = {},
-            sortFilter = "",
-            updateSortFilter = {},
+            typeFilter = ContentType.ANIME,
+            getTypeFilters = { emptyList() },
+            updateTypeFilter = {},
             animesList = list,
-            searchAnime = {},
+            searchAnime = {_,_ ->},
             insertFavorite = {},
             deleteFavorite = {},
             navigateToDetail = {},
