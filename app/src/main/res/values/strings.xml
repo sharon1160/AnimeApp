@@ -14,4 +14,6 @@
     <string name="favorites_screen_title">Favorites</string>
     <string name="detail_screen_title">Detail</string>
     <string name="character_screen_title">Character</string>
+    <string name="no_favorites_message">No favorites</string>
+    <string name="delete_content_description">Delete content description</string>
 </resources>
