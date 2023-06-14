@@ -1,0 +1,22 @@
+query Animes($page: Int, $perPage: Int, $search: String, $sort: [MediaSort], $type: MediaType) {
+    Page(page: $page, perPage: $perPage) {
+        pageInfo {
+            total
+            perPage
+            currentPage
+        }
+        media(search: $search, type: $type, sort: $sort) {
+            id
+            coverImage {
+                extraLarge
+                large
+            }
+            title {
+                romaji
+                english
+                native
+            }
+            type
+        }
+    }
+}

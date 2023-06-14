@@ -1,0 +1,38 @@
+query Anime($id: Int) {
+    Media(id: $id) {
+        id
+        coverImage {
+            extraLarge
+            large
+        }
+        title {
+            romaji
+            english
+            native
+        }
+        type
+        averageScore
+        episodes
+        genres
+        description
+        characters {
+            edges {
+                node {
+                    id
+                    name {
+                        first
+                        middle
+                        last
+                        full
+                        native
+                        userPreferred
+                    }
+                    image {
+                        large
+                        medium
+                    }
+                }
+            }
+        }
+    }
+}
