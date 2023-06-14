@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -25,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
@@ -33,13 +34,16 @@ import com.example.animeapp.presentation.ui.theme.Roboto
 import com.example.animeapp.R
 import com.example.animeapp.domain.Anime
 import com.example.animeapp.domain.enums.ContentType
+import com.example.animeapp.presentation.ui.favorites.FavoritesViewModel
 import com.example.animeapp.presentation.ui.home.AnimeTopAppBar
 
 @Composable
 fun SearchScreen(
     searchViewModel: SearchViewModel = hiltViewModel(),
+    favoritesViewModel: FavoritesViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
+    val resultedList = searchViewModel.resultedList.collectAsLazyPagingItems()
     val uiState by searchViewModel.uiState.collectAsState()
 
     val navigateToDetail = { navController.navigate("detail") }
@@ -52,10 +56,10 @@ fun SearchScreen(
             uiState.typeFilter,
             searchViewModel::getTypeFilters,
             searchViewModel::updateTypeFilter,
-            uiState.animes,
+            resultedList,
             searchViewModel::searchAnime,
-            {},
-            {},
+            favoritesViewModel::insert,
+            favoritesViewModel::delete,
             navigateToDetail,
             navigateToFavorites
         )
@@ -69,7 +73,7 @@ fun SearchScreenContent(
     typeFilter: ContentType,
     getTypeFilters: () -> List<ContentType>,
     updateTypeFilter: (String) -> Unit,
-    animesList: List<Anime>?,
+    resultedList: LazyPagingItems<Anime>?,
     searchAnime: (String, ContentType) -> Unit,
     insertFavorite: (Anime) -> Unit,
     deleteFavorite: (Anime) -> Unit,
@@ -91,10 +95,10 @@ fun SearchScreenContent(
         ) {
             SearchAnimeBar(searchAnime, query, typeFilter, updateQuery)
             Filters(query, searchAnime, typeFilter, getTypeFilters, updateTypeFilter)
-            animesList?.let {
-                if (animesList.isNotEmpty()) {
+            resultedList?.let {
+                if (resultedList.itemCount > 0) {
                     AnimesList(
-                        animesList,
+                        resultedList,
                         insertFavorite,
                         deleteFavorite,
                         navigateToDetail
@@ -103,7 +107,7 @@ fun SearchScreenContent(
                     Message(stringResource(R.string.welcome_message))
                 }
             }
-            if (animesList == null) {
+            if (resultedList == null) {
                 Message(stringResource(R.string.welcome_message))
             }
         }
@@ -189,7 +193,7 @@ fun FilterChip(title: String, selected: String, onSelected: (String) -> Unit) {
 
 @Composable
 fun AnimesList(
-    animesList: List<Anime>,
+    resultedList: LazyPagingItems<Anime>,
     insertFavorite: (Anime) -> Unit,
     deleteFavorite: (Anime) -> Unit,
     navigateToDetail: () -> Unit
@@ -204,7 +208,11 @@ fun AnimesList(
                 bottom = 12.dp
             ),
             content = {
-                items(animesList) { anime ->
+                items(count = resultedList.itemCount, key = { index ->
+                    val anime = resultedList[index]
+                    anime?.id ?: ""
+                }) { index ->
+                    val anime = resultedList[index] ?: return@items
                     AnimeCard(
                         anime,
                         insertFavorite,
@@ -212,6 +220,17 @@ fun AnimesList(
                         navigateToDetail
                     )
                 }
+                /*
+                itemsIndexed(resultedList) { _, anime ->
+                    anime?.let {
+                        AnimeCard(
+                            it,
+                            insertFavorite,
+                            deleteFavorite,
+                            navigateToDetail
+                        )
+                    }
+                }*/
             }
         )
     }
@@ -395,50 +414,6 @@ fun SearchAnimeBar(
 @Preview
 @Composable
 fun SearchScreenPreview() {
-    val list = listOf(
-        Anime(
-            1,
-            "https://media.npr.org/assets/img/2021/08/11/gettyimages-1279899488_wide-f3860ceb0ef19643c335cb34df3fa1de166e2761-s1100-c50.jpg",
-            "English",
-            "Japanese",
-            "type"
-        ),
-        Anime(
-            2,
-            "https://media.npr.org/assets/img/2021/08/11/gettyimages-1279899488_wide-f3860ceb0ef19643c335cb34df3fa1de166e2761-s1100-c50.jpg",
-            "English",
-            "Japanese",
-            "type"
-        ),
-        Anime(
-            3,
-            "https://media.npr.org/assets/img/2021/08/11/gettyimages-1279899488_wide-f3860ceb0ef19643c335cb34df3fa1de166e2761-s1100-c50.jpg",
-            "English",
-            "Japanese",
-            "type"
-        ),
-        Anime(
-            4,
-            "https://media.npr.org/assets/img/2021/08/11/gettyimages-1279899488_wide-f3860ceb0ef19643c335cb34df3fa1de166e2761-s1100-c50.jpg",
-            "English",
-            "Japanese",
-            "type"
-        ),
-        Anime(
-            5,
-            "https://media.npr.org/assets/img/2021/08/11/gettyimages-1279899488_wide-f3860ceb0ef19643c335cb34df3fa1de166e2761-s1100-c50.jpg",
-            "English",
-            "Japanese",
-            "type"
-        ),
-        Anime(
-            6,
-            "https://media.npr.org/assets/img/2021/08/11/gettyimages-1279899488_wide-f3860ceb0ef19643c335cb34df3fa1de166e2761-s1100-c50.jpg",
-            "English",
-            "Japanese",
-            "type"
-        )
-    )
     AnimeAppTheme {
         SearchScreenContent(
             query = "",
@@ -446,7 +421,7 @@ fun SearchScreenPreview() {
             typeFilter = ContentType.ANIME,
             getTypeFilters = { emptyList() },
             updateTypeFilter = {},
-            animesList = list,
+            resultedList = null,
             searchAnime = {_,_ ->},
             insertFavorite = {},
             deleteFavorite = {},

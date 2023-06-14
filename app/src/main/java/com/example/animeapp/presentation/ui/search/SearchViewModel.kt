@@ -2,39 +2,52 @@ package com.example.animeapp.presentation.ui.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
+import com.example.animeapp.domain.Anime
 import com.example.animeapp.domain.enums.ContentType
-import com.example.animeapp.domain.usecase.GetAnimesUseCase
-import com.example.animeapp.domain.usecase.GetAnimeUseCase
+import com.example.animeapp.domain.repository.AnimesRepository
+import com.example.animeapp.domain.repository.FavoritesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val getAnimesUseCase: GetAnimesUseCase,
-    private val getAnimeUseCase: GetAnimeUseCase
+    private val animesRepository: AnimesRepository,
+    favoriteRepository: FavoritesRepository
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun searchAnime(query: String, typeFilter: ContentType) {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    animes = getAnimesUseCase
-                        .execute(
-                            search = query,
-                            type = typeFilter
-                        )
-                )
+    private val _paginatedAnimes = MutableStateFlow<PagingData<Anime>>(PagingData.empty())
+    private val paginatedAnimes = _paginatedAnimes.cachedIn(viewModelScope)
+
+    private val favoritesAnimes =  favoriteRepository.getAllFavorites().flowOn(Dispatchers.IO)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    val resultedList = combine(paginatedAnimes,favoritesAnimes) { paginatedAnimes, favoritesAnimes ->
+        paginatedAnimes.map { anime ->
+            if (favoritesAnimes.contains(anime)) {
+                anime.copy(isFavorite = true)
+            } else {
+                anime
             }
+        }
+    }
+
+    fun searchAnime(query: String, typeFilter: ContentType) {
+        animesRepository.getAnimes(query, typeFilter).onEach { paginatedAnimes ->
+                _paginatedAnimes.update {
+                    paginatedAnimes
+                }
+            }.launchIn(viewModelScope)
             _uiState.update {
                 it.copy(query = query)
             }
-        }
     }
 
     fun getTypeFilters(): List<ContentType> {
