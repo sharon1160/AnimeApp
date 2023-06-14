@@ -3,8 +3,8 @@ package com.example.animeapp.presentation.ui.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.animeapp.domain.enums.ContentType
-import com.example.animeapp.domain.usecases.GetAnimesUseCase
-import com.example.animeapp.domain.usecases.GetAnimeUseCase
+import com.example.animeapp.domain.usecase.GetAnimesUseCase
+import com.example.animeapp.domain.usecase.GetAnimeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
