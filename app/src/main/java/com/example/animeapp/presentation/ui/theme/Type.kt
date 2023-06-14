@@ -1,4 +1,4 @@
-package com.example.animeapp.ui.theme
+package com.example.animeapp.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -32,6 +32,11 @@ val typography = Typography(
         fontFamily = Roboto,
         fontWeight = FontWeight.Light,
         fontSize = 16.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Light,
+        fontSize = 8.sp
     ),
     headlineMedium = TextStyle(
         fontFamily = Roboto,

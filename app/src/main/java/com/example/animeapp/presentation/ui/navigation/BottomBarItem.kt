@@ -1,4 +1,4 @@
-package com.example.animeapp.ui.navigation
+package com.example.animeapp.presentation.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
