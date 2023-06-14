@@ -1,4 +1,4 @@
-package com.example.animeapp.ui
+package com.example.animeapp.presentation.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,15 +8,16 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.animeapp.ui.navigation.graphs.RootNavigationGraph
-import com.example.animeapp.ui.theme.AnimeAppTheme
+import com.example.animeapp.presentation.ui.navigation.graphs.RootNavigationGraph
+import com.example.animeapp.presentation.ui.theme.AnimeAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AnimeAppTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
