@@ -46,7 +46,7 @@ fun SearchScreen(
     val resultedList = searchViewModel.resultedList.collectAsLazyPagingItems()
     val uiState by searchViewModel.uiState.collectAsState()
 
-    val navigateToDetail = { navController.navigate("detail") }
+    val navigateToDetail = { id: Int -> navController.navigate("detail/$id") }
     val navigateToFavorites = { navController.navigate("favorites") }
 
     AnimeAppTheme {
@@ -77,7 +77,7 @@ fun SearchScreenContent(
     searchAnime: (String, ContentType) -> Unit,
     insertFavorite: (Anime) -> Unit,
     deleteFavorite: (Anime) -> Unit,
-    navigateToDetail: () -> Unit,
+    navigateToDetail: (Int) -> Unit,
     navigateToFavorites: () -> Unit
 ) {
     Scaffold(
@@ -85,7 +85,7 @@ fun SearchScreenContent(
             AnimeTopAppBar(
                 title = stringResource(R.string.search_screen_title),
                 navigateToFavorites = navigateToFavorites,
-                navigateToBack = {})
+                navigateToBack = { false })
         },
     ) {
         Box(
@@ -196,7 +196,7 @@ fun AnimesList(
     resultedList: LazyPagingItems<Anime>,
     insertFavorite: (Anime) -> Unit,
     deleteFavorite: (Anime) -> Unit,
-    navigateToDetail: () -> Unit
+    navigateToDetail: (Int) -> Unit
 ) {
     Box(modifier = Modifier.padding(top = 120.dp)) {
         LazyVerticalGrid(
@@ -220,17 +220,6 @@ fun AnimesList(
                         navigateToDetail
                     )
                 }
-                /*
-                itemsIndexed(resultedList) { _, anime ->
-                    anime?.let {
-                        AnimeCard(
-                            it,
-                            insertFavorite,
-                            deleteFavorite,
-                            navigateToDetail
-                        )
-                    }
-                }*/
             }
         )
     }
@@ -241,7 +230,7 @@ fun AnimeCard(
     anime: Anime,
     insertFavorite: (Anime) -> Unit,
     deleteFavorite: (Anime) -> Unit,
-    navigateToDetail: () -> Unit
+    navigateToDetail: (Int) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -249,7 +238,7 @@ fun AnimeCard(
             .fillMaxWidth()
             .height(180.dp)
             .clickable {
-                navigateToDetail()
+                navigateToDetail(anime.id)
             },
         shape = MaterialTheme.shapes.small
     ) {

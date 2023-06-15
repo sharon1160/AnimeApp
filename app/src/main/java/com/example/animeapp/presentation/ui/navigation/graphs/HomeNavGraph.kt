@@ -2,10 +2,11 @@ package com.example.animeapp.presentation.ui.navigation.graphs
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.animeapp.presentation.ui.character.CharacterScreen
-import com.example.animeapp.presentation.ui.navigation.BottomBarItem
 import com.example.animeapp.presentation.ui.detail.DetailScreen
 import com.example.animeapp.presentation.ui.favorites.FavoritesScreen
 import com.example.animeapp.presentation.ui.search.SearchScreen
@@ -15,16 +16,21 @@ fun HomeNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         route = Graph.HOME,
-        startDestination = BottomBarItem.Search.route
+        startDestination = "search"
     ) {
-        composable(route = BottomBarItem.Search.route) {
+        composable(route = "search") {
             SearchScreen(navController = navController)
         }
-        composable(route = BottomBarItem.Favorites.route) {
+        composable(route = "favorites") {
             FavoritesScreen(navController = navController)
         }
-        composable(route = "detail") {
-            DetailScreen(navController = navController)
+        composable(route = "detail/{id}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toInt()
+            DetailScreen(navController = navController, id = id)
         }
         composable(route = "character") {
             CharacterScreen(navController = navController)
