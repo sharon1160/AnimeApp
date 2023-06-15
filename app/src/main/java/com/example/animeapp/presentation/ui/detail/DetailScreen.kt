@@ -1,6 +1,5 @@
 package com.example.animeapp.presentation.ui.detail
 
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -46,8 +45,8 @@ fun DetailScreen(
 
     val navigateToFavorites = { navController.navigate("favorites") }
     val navigateToSearch = { navController.popBackStack() }
-    val navigateToCharacter = {image: String, name: String ->
-        navController.navigate("character/${Uri.encode(image)}/$name")
+    val navigateToCharacter = { characterId: Int ->
+        navController.navigate("character/$characterId")
     }
 
     DetailScreenContent(
@@ -63,7 +62,7 @@ fun DetailScreenContent(
     navigateToFavorites: () -> Unit,
     navigateToSearch: () -> Boolean,
     detailedAnime: DetailedAnime?,
-    navigateToCharacter: (String, String) -> Unit
+    navigateToCharacter: (Int) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -199,7 +198,7 @@ fun PropertyField(label: String, content: String) {
 @Composable
 fun CharactersList(
     characters: List<Character>,
-    navigateToCharacter: (String, String) -> Unit
+    navigateToCharacter: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(start = 16.dp, end = 26.dp)
@@ -242,14 +241,14 @@ fun CharactersList(
 }
 
 @Composable
-fun CharacterCard(item: Character, navigateToCharacter: (String, String) -> Unit) {
+fun CharacterCard(item: Character, navigateToCharacter: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .padding(4.dp)
             .fillMaxWidth()
             .height(190.dp)
             .clickable {
-                navigateToCharacter(item.largeImage, item.name)
+                navigateToCharacter(item.id)
             },
         shape = MaterialTheme.shapes.small
     ) {
@@ -296,6 +295,6 @@ fun CharacterCard(item: Character, navigateToCharacter: (String, String) -> Unit
 @Composable
 fun DetailScreenPreview() {
     AnimeAppTheme {
-        DetailScreenContent({}, { false }, null, {_,_ ->})
+        DetailScreenContent({}, { false }, null, {})
     }
 }
