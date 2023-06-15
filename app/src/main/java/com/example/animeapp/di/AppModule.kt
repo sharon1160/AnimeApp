@@ -10,6 +10,7 @@ import com.example.animeapp.domain.repository.AnimesRepositoryImpl
 import com.example.animeapp.domain.repository.FavoritesRepository
 import com.example.animeapp.domain.usecase.GetAnimeUseCase
 import com.example.animeapp.domain.usecase.GetAnimesUseCase
+import com.example.animeapp.domain.usecase.GetCharacterUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,6 +44,12 @@ object AppModule {
     @Singleton
     fun provideGetAnimeUseCase(animeClient: AnimeClient): GetAnimeUseCase {
         return GetAnimeUseCase(animeClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetCharacterUseCase(animeClient: AnimeClient): GetCharacterUseCase {
+        return GetCharacterUseCase(animeClient)
     }
 
     @Provides
