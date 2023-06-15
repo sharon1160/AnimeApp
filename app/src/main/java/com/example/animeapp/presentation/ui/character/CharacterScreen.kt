@@ -17,13 +17,13 @@ import com.example.animeapp.presentation.ui.theme.AnimeAppTheme
 fun CharacterScreen(navController: NavHostController) {
 
     val navigateToFavorites = { navController.navigate("favorites") }
-    val navigateToDetail = { navController.navigate("detail") }
+    val navigateToDetail = { navController.popBackStack() }
 
     CharacterContentScreen(navigateToFavorites, navigateToDetail)
 }
 
 @Composable
-fun CharacterContentScreen(navigateToFavorites: () -> Unit, navigateToDetail: () -> Unit) {
+fun CharacterContentScreen(navigateToFavorites: () -> Unit, navigateToDetail: () -> Boolean) {
     Scaffold(
         topBar = {
             AnimeTopAppBar(
@@ -44,6 +44,6 @@ fun CharacterContentScreen(navigateToFavorites: () -> Unit, navigateToDetail: ()
 @Composable
 fun CharacterScreenPreview() {
     AnimeAppTheme {
-        CharacterContentScreen({},{})
+        CharacterContentScreen({},{ false })
     }
 }

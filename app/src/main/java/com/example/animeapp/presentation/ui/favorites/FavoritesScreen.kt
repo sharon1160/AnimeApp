@@ -45,14 +45,16 @@ fun FavoritesScreen(
     val favoritesAnimes by favoritesViewModel.favoritesAnimes.collectAsState()
 
     val navigateToFavorites = { navController.navigate("favorites") }
-    val navigateToBack = { navController.navigate("search") }
+    val navigateToBack = { navController.popBackStack() }
+    val navigateToDetail = { id: Int -> navController.navigate("detail/$id")}
 
     AnimeAppTheme {
         FavoritesScreenContent(
             favoritesAnimes,
             favoritesViewModel::delete,
             navigateToFavorites,
-            navigateToBack
+            navigateToBack,
+            navigateToDetail
         )
     }
 }
@@ -62,7 +64,8 @@ fun FavoritesScreenContent(
     favoritesList: List<Anime>,
     deleteFavorite: (Anime) -> Unit,
     navigateToFavorites: () -> Unit,
-    navigateToBack: () -> Unit
+    navigateToBack: () -> Boolean,
+    navigateToDetail: (Int) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -78,7 +81,8 @@ fun FavoritesScreenContent(
         ) {
             CarouselCard(
                 favoritesList,
-                deleteFavorite
+                deleteFavorite,
+                navigateToDetail
             )
         }
     }
@@ -89,7 +93,8 @@ fun FavoritesScreenContent(
 @Composable
 fun CarouselCard(
     favoritesList: List<Anime>,
-    deleteFavorite: (Anime) -> Unit
+    deleteFavorite: (Anime) -> Unit,
+    navigateToDetail: (Int) -> Unit
 ) {
     if (favoritesList.isNotEmpty()) {
         val pagerState = rememberPagerState(initialPage = 1)
@@ -108,7 +113,7 @@ fun CarouselCard(
                         .height(420.dp)
                         .width(250.dp)
                         .clickable {
-
+                            navigateToDetail(favoritesList[page].id)
                         }
                         .graphicsLayer {
                             val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
@@ -159,7 +164,7 @@ fun CarouselCard(
                                     text = favoritesList[page].japaneseTitle,
                                     fontWeight = FontWeight.Light,
                                     fontFamily = Roboto,
-                                    style = MaterialTheme.typography.bodySmall,
+                                    style = MaterialTheme.typography.bodyMedium,
                                 )
                             }
                             DeleteButton(favoritesList[page], deleteFavorite)
@@ -201,7 +206,8 @@ fun FavoritesScreenPreview() {
             favoritesList = emptyList(),
             deleteFavorite = {},
             navigateToFavorites = {},
-            navigateToBack = {},
+            navigateToBack = { false },
+            navigateToDetail = {}
         )
     }
 }

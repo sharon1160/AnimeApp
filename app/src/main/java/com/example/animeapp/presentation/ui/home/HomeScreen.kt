@@ -25,7 +25,7 @@ fun HomeScreenContent(navController: NavHostController) {
 }
 
 @Composable
-fun AnimeTopAppBar(title: String, navigateToFavorites: () -> Unit, navigateToBack: () -> Unit) {
+fun AnimeTopAppBar(title: String, navigateToFavorites: () -> Unit, navigateToBack: () -> Boolean) {
     TopAppBar(
         title = { Text(text = title,
             color = MaterialTheme.colorScheme.surface,
