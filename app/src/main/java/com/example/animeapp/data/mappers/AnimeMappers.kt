@@ -16,7 +16,7 @@ fun AnimeQuery.Media.toDomainModel(): DetailedAnime {
         type = type?.name ?: "",
         episodes = episodes ?: 0,
         genres = genres?.mapNotNull { it } ?: emptyList(),
-        description = description ?: "",
+        description = description ?: "No description",
         characters = characters?.edges?.mapNotNull {
             it?.let { edge ->
                 edge.node?.let { node ->
@@ -36,9 +36,8 @@ fun AnimesQuery.Medium.toDomainModel(): Anime {
     return Anime(
         id = id,
         coverLargeImage = coverImage?.large ?: "",
-        englishTitle = title?.english ?: "",
-        japaneseTitle = title?.native ?: "",
+        englishTitle = title?.english ?: "No title",
+        japaneseTitle = title?.native ?: "No title",
         type = type?.name ?: ""
-
     )
 }
