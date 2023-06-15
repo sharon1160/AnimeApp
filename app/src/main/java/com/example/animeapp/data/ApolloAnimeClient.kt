@@ -4,10 +4,12 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.example.AnimeQuery
 import com.example.AnimesQuery
+import com.example.CharacterQuery
 import com.example.animeapp.data.mappers.toApolloModel
 import com.example.animeapp.domain.AnimeClient
 import com.example.animeapp.domain.DetailedAnime
 import com.example.animeapp.domain.Anime
+import com.example.animeapp.domain.DetailedCharacter
 import com.example.animeapp.domain.enums.ContentSort
 import com.example.animeapp.domain.enums.ContentType
 
@@ -50,4 +52,14 @@ class ApolloAnimeClient(
             ?.Media
             ?.toDomainModel()
     }
+
+    override suspend fun getCharacter(id: Int): DetailedCharacter? {
+        return apolloClient
+            .query(CharacterQuery(Optional.Present(id)))
+            .execute()
+            .data
+            ?.Character
+            ?.toDomainModel()
+    }
+
 }

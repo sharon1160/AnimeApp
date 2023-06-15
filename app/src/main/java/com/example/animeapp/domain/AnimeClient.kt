@@ -13,4 +13,6 @@ interface AnimeClient {
     ): List<Anime>
 
     suspend fun getAnime(id: Int): DetailedAnime?
+
+    suspend fun getCharacter(id: Int): DetailedCharacter?
 }
