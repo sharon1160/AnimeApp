@@ -1,0 +1,14 @@
+query Character($id: Int) {
+    Character(id: $id) {
+        id
+        name {
+            full
+            native
+        }
+        image {
+            large
+        }
+        gender
+        description
+    }
+}
