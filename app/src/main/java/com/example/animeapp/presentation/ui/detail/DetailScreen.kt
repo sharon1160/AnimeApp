@@ -1,5 +1,6 @@
 package com.example.animeapp.presentation.ui.detail
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -45,7 +46,9 @@ fun DetailScreen(
 
     val navigateToFavorites = { navController.navigate("favorites") }
     val navigateToSearch = { navController.popBackStack() }
-    val navigateToCharacter = { navController.navigate("character")}
+    val navigateToCharacter = {image: String, name: String ->
+        navController.navigate("character/${Uri.encode(image)}/$name")
+    }
 
     DetailScreenContent(
         navigateToFavorites,
@@ -60,7 +63,7 @@ fun DetailScreenContent(
     navigateToFavorites: () -> Unit,
     navigateToSearch: () -> Boolean,
     detailedAnime: DetailedAnime?,
-    navigateToCharacter: () -> Unit
+    navigateToCharacter: (String, String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -196,7 +199,7 @@ fun PropertyField(label: String, content: String) {
 @Composable
 fun CharactersList(
     characters: List<Character>,
-    navigateToCharacter: () -> Unit
+    navigateToCharacter: (String, String) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(start = 16.dp, end = 26.dp)
@@ -239,14 +242,14 @@ fun CharactersList(
 }
 
 @Composable
-fun CharacterCard(item: Character, navigateToCharacter: () -> Unit) {
+fun CharacterCard(item: Character, navigateToCharacter: (String, String) -> Unit) {
     Card(
         modifier = Modifier
             .padding(4.dp)
             .fillMaxWidth()
             .height(190.dp)
             .clickable {
-                navigateToCharacter()
+                navigateToCharacter(item.largeImage, item.name)
             },
         shape = MaterialTheme.shapes.small
     ) {
@@ -293,6 +296,6 @@ fun CharacterCard(item: Character, navigateToCharacter: () -> Unit) {
 @Composable
 fun DetailScreenPreview() {
     AnimeAppTheme {
-        DetailScreenContent({}, { false }, null, {})
+        DetailScreenContent({}, { false }, null, {_,_ ->})
     }
 }
