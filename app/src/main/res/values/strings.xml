@@ -16,4 +16,11 @@
     <string name="character_screen_title">Character</string>
     <string name="no_favorites_message">No favorites</string>
     <string name="delete_content_description">Delete content description</string>
+    <string name="episodes_label">Episodes</string>
+    <string name="score_label">Score</string>
+    <string name="genres_label">Genres</string>
+    <string name="description_label">Description</string>
+    <string name="no_genres_label">No genres</string>
+    <string name="characters_label">Characters</string>
+    <string name="message_no_characters">No characters</string>
 </resources>
