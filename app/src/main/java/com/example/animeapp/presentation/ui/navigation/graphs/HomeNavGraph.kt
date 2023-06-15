@@ -1,6 +1,5 @@
 package com.example.animeapp.presentation.ui.navigation.graphs
 
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,22 +26,19 @@ fun HomeNavGraph(navController: NavHostController) {
         }
         composable(route = "detail/{id}",
             arguments = listOf(
-                navArgument("id") { type = NavType.StringType }
+                navArgument("id") { type = NavType.IntType }
             )
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")?.toInt()
+            val id = backStackEntry.arguments?.getInt("id")
             DetailScreen(navController = navController, id = id)
         }
-        composable(route = "character/{image}/{name}",
+        composable(route = "character/{id}",
             arguments = listOf(
-                navArgument("image") { type = NavType.StringType },
-                navArgument("name") { type = NavType.StringType }
+                navArgument("id") { type = NavType.IntType }
             )
         ) { backStackEntry ->
-            val image =
-                Uri.parse(Uri.decode(backStackEntry.arguments?.getString("image"))).toString()
-            val name = backStackEntry.arguments?.getString("name").toString()
-            CharacterScreen(navController = navController, image = image, name = name)
+            val id = backStackEntry.arguments?.getInt("id")
+            CharacterScreen(navController = navController, id = id)
         }
     }
 }
