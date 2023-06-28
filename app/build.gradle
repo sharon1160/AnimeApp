@@ -70,6 +70,10 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+    // Mockk
+    testImplementation 'io.mockk:mockk:1.13.2'
+    // Test
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
     // Material 3
     implementation "androidx.compose.material3:material3:1.1.0"
     implementation "androidx.compose.material3:material3-window-size-class:1.1.0"
