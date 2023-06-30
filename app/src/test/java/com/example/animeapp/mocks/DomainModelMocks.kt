@@ -36,4 +36,12 @@ object DomainModelMocks {
         gender = "gender",
         description = "description"
     )
+
+    val animeMock = Anime(
+        id = 0,
+        coverLargeImage = "coverLargeImage",
+        englishTitle = "englishTitle",
+        japaneseTitle = "japaneseTitle",
+        type = "type"
+    )
 }
