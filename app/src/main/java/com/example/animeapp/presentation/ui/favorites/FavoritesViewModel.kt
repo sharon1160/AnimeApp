@@ -20,13 +20,13 @@ class FavoritesViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     fun insert(anime: Anime) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             favoritesRepository.insert(anime)
         }
     }
 
     fun delete(anime: Anime) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             favoritesRepository.delete(anime)
         }
     }
