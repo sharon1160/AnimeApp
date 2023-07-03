@@ -24,7 +24,7 @@ class SearchViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private val _paginatedAnimes = MutableStateFlow<PagingData<Anime>>(PagingData.empty())
-    private val paginatedAnimes = _paginatedAnimes.cachedIn(viewModelScope)
+    val paginatedAnimes = _paginatedAnimes.cachedIn(viewModelScope)
 
     private val favoritesAnimes =  favoriteRepository.getAllFavorites().flowOn(Dispatchers.IO)
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
