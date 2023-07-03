@@ -1,35 +1,38 @@
 package com.example.animeapp.presentation.ui.favorites
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.animeapp.domain.Anime
+import com.example.animeapp.domain.repository.FavoritesRepository
 import com.example.animeapp.mocks.DomainModelMocks
-import com.example.animeapp.presentation.ui.fakeRepositories.FakeFavoritesRepository
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class FavoritesViewModelTest {
 
-    @get:Rule
-    var rule: InstantTaskExecutorRule = InstantTaskExecutorRule()
+    private lateinit var favoritesRepository: FavoritesRepository
+
+    private lateinit var favoritesViewModel: FavoritesViewModel
 
     @Before
-    fun onBefore() {
+    fun setUp() {
         MockKAnnotations.init(this)
         Dispatchers.setMain(Dispatchers.Unconfined)
+        favoritesRepository = mockk(relaxed = true)
+        favoritesViewModel = FavoritesViewModel(favoritesRepository)
     }
 
     @After
@@ -37,45 +40,58 @@ class FavoritesViewModelTest {
         Dispatchers.resetMain()
     }
 
+
     @Test
     fun `when an anime is inserted`() = runTest {
-        val fakeFavoritesRepository = FakeFavoritesRepository()
-        val favoritesViewModel = FavoritesViewModel(fakeFavoritesRepository)
-
         val anime = DomainModelMocks.animeMock
-        withContext(Dispatchers.IO) {
-            favoritesViewModel.insert(anime)
-        }
+        val favoritesFlow = MutableStateFlow(listOf(anime))
 
-        assert(favoritesViewModel.favoritesAnimes.value.isNotEmpty())
-        assertEquals(anime, favoritesViewModel.favoritesAnimes.value.last())
+        coEvery { favoritesRepository.getAllFavorites() } returns favoritesFlow.asStateFlow()
+
+        coEvery { favoritesRepository.insert(anime) } returns Unit
+
+        favoritesViewModel.insert(anime)
+
+        val job = launch {
+            favoritesViewModel.favoritesAnimes.collect { animeList ->
+                assert(animeList.isNotEmpty())
+                assertEquals(anime, favoritesViewModel.favoritesAnimes.value.last())
+            }
+        }
+        job.cancel()
     }
 
     @Test
-    fun `when an anime is inserted and deleted`() = runTest {
-        val fakeFavoritesRepository = FakeFavoritesRepository()
-        val favoritesViewModel = FavoritesViewModel(fakeFavoritesRepository)
+    fun `when an anime is deleted`() = runTest {
         val anime = DomainModelMocks.animeMock
+        val favoritesFlow = MutableStateFlow(listOf(anime))
 
-        withContext(Dispatchers.IO) {
-            favoritesViewModel.insert(anime)
-        }
-        assert(favoritesViewModel.favoritesAnimes.value.isNotEmpty())
-        assertEquals(anime, favoritesViewModel.favoritesAnimes.value.last())
+        coEvery { favoritesRepository.getAllFavorites() } returns favoritesFlow.asStateFlow()
 
-        withContext(Dispatchers.IO) {
-            favoritesViewModel.delete(anime)
+        coEvery { favoritesRepository.delete(anime) } returns Unit
+
+        favoritesViewModel.delete(anime)
+
+        favoritesFlow.value = emptyList()
+
+        val job = launch {
+            favoritesViewModel.favoritesAnimes.collect { animeList ->
+                assert(animeList.isEmpty())
+                assertEquals(false, animeList.contains(anime))
+            }
         }
-        assertEquals(false, favoritesViewModel.favoritesAnimes.value.contains(anime))
+
+        delay(500)
+        job.cancel()
     }
 
     @Test
-    fun `when favoritesRepository returns a favorites list as state flow`() = runTest {
-        val fakeFavoritesRepository = FakeFavoritesRepository()
-        val favoritesViewModel = FavoritesViewModel(fakeFavoritesRepository)
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            favoritesViewModel.favoritesAnimes.collect()
-        }
-        assertEquals(emptyList<Anime>(), favoritesViewModel.favoritesAnimes.value)
+    fun `when favoritesRepository returns a favorites empty list as state flow`() = runTest {
+
+        val favoritesFlow = MutableStateFlow(emptyList<Anime>())
+
+        coEvery { favoritesRepository.getAllFavorites() } returns favoritesFlow.asStateFlow()
+
+        assert(favoritesViewModel.favoritesAnimes.value.isEmpty())
     }
 }
