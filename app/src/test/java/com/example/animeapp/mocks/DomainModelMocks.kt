@@ -24,7 +24,8 @@ object DomainModelMocks {
             coverLargeImage = "coverLargeImage",
             englishTitle = "englishTitle",
             japaneseTitle = "japaneseTitle",
-            type = "type"
+            type = "type",
+            isFavorite = true
         )
     )
 
