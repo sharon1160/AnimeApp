@@ -121,7 +121,7 @@ fun DetailScreenContent(
                             .height(280.dp)
                             .clip(MaterialTheme.shapes.small),
                         contentScale = ContentScale.Crop,
-                        contentDescription = null
+                        contentDescription = stringResource(R.string.image_detail)
                     )
                 }
                 AnimeDescription(detailedAnime)
@@ -139,6 +139,7 @@ fun AnimeDescription(detailedAnime: DetailedAnime) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(20.dp)
+            .testTag(TestTags.ANIME_DESCRIPTION)
     ) {
         Card(
             shape = MaterialTheme.shapes.medium
@@ -218,6 +219,7 @@ fun CharactersList(
                 contentPadding = PaddingValues(
                     bottom = 12.dp
                 ),
+                modifier = Modifier.testTag(TestTags.CHARACTERS_LIST),
                 content = {
                     items(characters.size) { index ->
                         CharacterCard(
