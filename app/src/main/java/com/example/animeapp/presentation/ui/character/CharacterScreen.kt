@@ -88,14 +88,16 @@ fun CharacterContentScreen(
                         fontWeight = FontWeight.Bold,
                         fontFamily = Roboto,
                         style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.testTag(TestTags.FULL_NAME_TEXT)
                     )
                     androidx.compose.material3.Text(
                         text = detailedCharacter.nativeName,
                         fontWeight = FontWeight.Light,
                         fontFamily = Roboto,
                         style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.testTag(TestTags.NATIVE_NAME_TEXT)
                     )
                 }
                 Column(
@@ -115,7 +117,7 @@ fun CharacterContentScreen(
                             .size(290.dp)
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop,
-                        contentDescription = null
+                        contentDescription = stringResource(R.string.character_image)
                     )
                 }
                 CharacterDescription(detailedCharacter)
