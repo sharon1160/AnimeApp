@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,7 @@ import coil.size.Scale
 import com.example.animeapp.presentation.ui.theme.AnimeAppTheme
 import com.example.animeapp.presentation.ui.theme.Roboto
 import com.example.animeapp.R
+import com.example.animeapp.core.util.TestTags
 import com.example.animeapp.domain.Anime
 import com.example.animeapp.domain.enums.ContentType
 import com.example.animeapp.presentation.ui.favorites.FavoritesViewModel
@@ -326,7 +328,8 @@ fun Message(text: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(),
+            .fillMaxHeight()
+            .testTag(TestTags.MESSAGE_NO_FAVORITES),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

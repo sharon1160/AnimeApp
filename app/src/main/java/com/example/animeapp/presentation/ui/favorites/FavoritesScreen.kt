@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +27,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.animeapp.R
+import com.example.animeapp.core.util.TestTags
 import com.example.animeapp.domain.Anime
 import com.example.animeapp.presentation.ui.home.AnimeTopAppBar
 import com.example.animeapp.presentation.ui.search.Message
@@ -107,6 +109,7 @@ fun CarouselCard(
                 contentPadding = PaddingValues(horizontal = 80.dp),
                 modifier = Modifier
                     .height(750.dp)
+                    .testTag(TestTags.CAROUSEL_CARD)
             ) { page ->
                 Card(
                     modifier = Modifier
