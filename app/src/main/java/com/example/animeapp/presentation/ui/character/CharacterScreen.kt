@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +27,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.animeapp.R
+import com.example.animeapp.core.util.TestTags
 import com.example.animeapp.domain.DetailedCharacter
 import com.example.animeapp.presentation.ui.detail.PropertyField
 import com.example.animeapp.presentation.ui.home.AnimeTopAppBar
@@ -66,6 +68,7 @@ fun CharacterContentScreen(
                 navigateToBack = navigateToDetail
             )
         },
+        modifier = Modifier.testTag(TestTags.CHARACTER_CONTENT_SCREEN)
     ) { paddingValues ->
         detailedCharacter?.let {
             Column(
